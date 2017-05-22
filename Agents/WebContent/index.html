@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" ng-app='app'>
+<head>
+  <title>POCETNA</title>
+  <script src="js/angular.js"></script>
+<script src="js/angular-route.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-animate.min.js"></script>
+ <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular-aria.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.4/angular-material.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
+
+  <style type="text/css">
+  	.well {
+   background-color: rgba(0, 0, 0, 0.3);
+}
+  </style>
+</head>
+<body style="background-color:#FBFCC6" >
+
+<div ui-view></div>
+&nbsp;
+
+<script src="js/app.js"></script>
+<script src="js/ctrl.js"></script>
+<script src="js/service.js"></script>
+<div ng-controller='ctrl'>
+<div class="row container center">
+   <div class="col-xs-offset-2">
+   <button class="btn btn-success " data-toggle="modal" data-target="#myModal">Dodavanje agenta</button>
+   
+  
+	 
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Dodavanje agenta</h4>
+        </div>
+        <div class="modal-body">
+         	 <p><input type="text" name="imeAgenta" class="form-control" placeholder="Upisite ime agenta" required="required" ng-model="name"></p><br>
+         	 <p>Izaberite tip agenta:
+         	 	<select  name="tipAgenta" class="form-control" required="required" ng-model="type">
+         	 		<option value="0">Ping</option>
+         	 		<option value="1">Pong</option>
+         	 	</select>
+         	 </p>
+        </div>
+        <div class="modal-footer">
+          <a type="button" href="" class="btn btn-danger" data-dismiss="modal" ng-click="startAgent()">Dodaj</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+&nbsp;
+
+<div class="row">
+	<div class="col-xs-4 col-xs-offset-2">
+		<div class="well">
+		<h4><b><i>Slanje poruke</i></b></h4>
+			<table>
+				<tr>
+					<td>Tip poruke</td>
+					<td><div class="dropdown">
+    					<button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Izaberi tip
+    					<span class="caret"></span></button>
+    						<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+      							<li value="0" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">ACCEPT_PROPOSAL</a></li>
+     							<li value="1" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">AGREE</a></li>
+      							<li value="2" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">CANCEL</a></li>
+      							<li value="3" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">CALL_FOR_PROPOSAL</a></li>
+     							<li value="4" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">CONFIRM</a></li>
+      							<li value="5" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">DISCONFIRM</a></li>
+      							<li value="6" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">FAILURE</a></li>
+     							<li value="7" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">INFORM</a></li>
+      							<li value="8" role="presentation"><a class="btn btn-default" role="menuitem" tabindex="-1" href="">INFORM_IF</a></li>
+      							<li value="9" role="presentation"><a class="btn btn-default " role="menuitem" tabindex="-1"  href="">INFORM_REF</a></li>
+     							<li value="10" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">NOT_UNDERSTOOD</a></li>
+      							<li value="11" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">PROPAGATE</a></li>
+      							<li value="12" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">PROPOSE</a></li>
+     							<li value="13" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">PROXY</a></li>
+      							<li value="14" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">QUERY_IF</a></li>
+      							<li value="15" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">QUERY_REF</a></li>
+     							<li value="16" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">REFUSE</a></li>
+      							<li value="17" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">REJECT_PROPOSAL</a></li>
+      							<li value="18" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">REQUEST</a></li>
+     							<li value="19" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">REQUEST_WHEN</a></li>
+      							<li value="20" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">REQUEST_WHENEVER</a></li>
+      							<li value="21" role="presentation"><a class="btn btn-default" role="menuitem" tabindex="-1" href="">SUBSCRIBE</a></li>
+      							<li role="presentation" class="divider"></li>
+    						</ul>
+  					</div>
+  					</td>
+				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td>Posiljalac: </td>
+					<td>
+						<select name="posiljalac" class="form-control">
+							<option>Posiljalac1</option>
+							<option>Posiljalac2</option>
+						</select>
+						
+					</td>
+				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td>Primalac: </td>
+					<td>
+						<select name="primalac" class="form-control">
+							<option>Primalac1</option>
+							<option>Primalac2</option>
+						</select>
+						
+					</td>
+				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td>Sadrzaj:</td>
+					<td><input class="form-control" type="text" name="sadrzajPoruke" placeholder="Unesite poruku"></td>
+				</tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr>
+					<td></td>
+					<td align="right"><a class="btn bg-success">Posalji</a></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="col-xs-3">
+		<div class="well">
+			<p><h4><i>Konzola</i></h4></p>
+			<textarea style="background-color: white;" class="form-control" readonly="readonly" rows="12" cols="5"></textarea>
+		</div>
+	</div>
+
+</div>
+</body>
+</html>
