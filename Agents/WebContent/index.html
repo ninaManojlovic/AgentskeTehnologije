@@ -21,17 +21,20 @@
    background-color: rgba(0, 0, 0, 0.3);
 }
   </style>
+  <script src="js/app.js"></script>
+<script src="js/ctrl.js"></script>
+<script src="js/service.js"></script>
 </head>
-<body style="background-color:#FBFCC6" >
+<body style="background-color:#FBFCC6" ng-controller='ctrl' ng-init="getRunning()">
 
 <div ui-view></div>
 &nbsp;
 
-<script src="js/app.js"></script>
-<script src="js/ctrl.js"></script>
-<script src="js/service.js"></script>
-<div ng-controller='ctrl'>
+
+<div>
 <div class="row container center">
+<button class="btn btn-default" value="rest" id="rest" ng-click="radiRest()" >Rest</button>
+ <button class="btn btn-default" value="websocket" ng-click="radiWebsocket();initSocket()" id="websocket" >Websocket</button>
    <div class="col-xs-offset-2">
    <button class="btn btn-success " data-toggle="modal" data-target="#myModal">Dodavanje agenta</button>
    
@@ -49,8 +52,8 @@
          	 <p><input type="text" name="imeAgenta" class="form-control" placeholder="Upisite ime agenta" required="required" ng-model="name"></p><br>
          	 <p>Izaberite tip agenta:
          	 	<select  name="tipAgenta" class="form-control" required="required" ng-model="type">
-         	 		<option value="0">Ping</option>
-         	 		<option value="1">Pong</option>
+         	 		<option value="PING">Ping</option>
+         	 		<option value="PONG">Pong</option>
          	 	</select>
          	 </p>
         </div>
@@ -70,45 +73,42 @@
 		<h4><b><i>Slanje poruke</i></b></h4>
 			<table>
 				<tr>
-					<td>Tip poruke</td>
-					<td><div class="dropdown">
-    					<button class="btn btn-default dropdown-toggle" type="button" id="menu1" data-toggle="dropdown">Izaberi tip
-    					<span class="caret"></span></button>
-    						<ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-      							<li value="0" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">ACCEPT_PROPOSAL</a></li>
-     							<li value="1" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">AGREE</a></li>
-      							<li value="2" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">CANCEL</a></li>
-      							<li value="3" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">CALL_FOR_PROPOSAL</a></li>
-     							<li value="4" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">CONFIRM</a></li>
-      							<li value="5" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">DISCONFIRM</a></li>
-      							<li value="6" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">FAILURE</a></li>
-     							<li value="7" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">INFORM</a></li>
-      							<li value="8" role="presentation"><a class="btn btn-default" role="menuitem" tabindex="-1" href="">INFORM_IF</a></li>
-      							<li value="9" role="presentation"><a class="btn btn-default " role="menuitem" tabindex="-1"  href="">INFORM_REF</a></li>
-     							<li value="10" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">NOT_UNDERSTOOD</a></li>
-      							<li value="11" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">PROPAGATE</a></li>
-      							<li value="12" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">PROPOSE</a></li>
-     							<li value="13" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">PROXY</a></li>
-      							<li value="14" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">QUERY_IF</a></li>
-      							<li value="15" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">QUERY_REF</a></li>
-     							<li value="16" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">REFUSE</a></li>
-      							<li value="17" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">REJECT_PROPOSAL</a></li>
-      							<li value="18" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1"  href="">REQUEST</a></li>
-     							<li value="19" role="presentation"><a class="btn btn-default "  role="menuitem" tabindex="-1" href="">REQUEST_WHEN</a></li>
-      							<li value="20" role="presentation"><a class="btn btn-default"  role="menuitem" tabindex="-1" href="">REQUEST_WHENEVER</a></li>
-      							<li value="21" role="presentation"><a class="btn btn-default" role="menuitem" tabindex="-1" href="">SUBSCRIBE</a></li>
-      							<li role="presentation" class="divider"></li>
-    						</ul>
-  					</div>
-  					</td>
-				</tr>
+     <td>Tip poruke</td>
+     <td><select class="form-control" name="tipPoruke" ng-model="tipPoruke">
+      <option value="0">ACCEPT_PROPOSAL</option>
+      <option value="1">AGREE</option>
+      <option value="2">CANCEL</option>
+      <option value="3">CALL_FOR_PROPOSAL</option>
+      <option value="4">CONFIRM</option>
+      <option value="5">DISCONFIRM</option>
+      <option value="6">FAILURE</option>
+      <option value="7">INFORM</option>
+      <option value="8">INFORM_IF</option>
+      <option value="9">INFORM_REF</option>
+      <option value="10">NOT_UNDERSTOOD</option>
+      <option value="11">PROPAGATE</option>
+      <option value="12">PROPOSE</option>
+      <option value="13">PROXY</option>
+      <option value="14">QUERY_IF</option>
+      <option value="15">QUERY_REF</option>
+      <option value="16">REFUSE</option>
+      <option value="17">REJECT_PROPOSAL</option>
+      <option value="18">REQUEST</option>
+      <option value="19">REQUEST_WHEN</option>
+      <option value="20">REQUEST_WHENEVER</option>
+      <option value="21">SUBSCRIBE</option>
+      
+      
+     </select>
+       </td>
+    </tr>
 				<tr><td>&nbsp;</td></tr>
 				<tr>
 					<td>Posiljalac: </td>
 					<td>
-						<select name="posiljalac" class="form-control">
-							<option>Posiljalac1</option>
-							<option>Posiljalac2</option>
+						<select name="posiljalac" class="form-control" ng-model="sender">
+							<option ng-repeat="agent in agents" value={{agent.aid.name}}>{{agent.aid.name}}</option>
+							
 						</select>
 						
 					</td>
@@ -117,9 +117,8 @@
 				<tr>
 					<td>Primalac: </td>
 					<td>
-						<select name="primalac" class="form-control">
-							<option>Primalac1</option>
-							<option>Primalac2</option>
+						<select name="primalac" class="form-control" ng-model="receivers">
+							<option ng-repeat="agent in agents" value={{agent.aid.name}}>{{agent.aid.name}}</option>
 						</select>
 						
 					</td>
@@ -127,12 +126,12 @@
 				<tr><td>&nbsp;</td></tr>
 				<tr>
 					<td>Sadrzaj:</td>
-					<td><input class="form-control" type="text" name="sadrzajPoruke" placeholder="Unesite poruku"></td>
+					<td><input class="form-control" type="text" name="sadrzajPoruke" placeholder="Unesite poruku" ng-model="content"></td>
 				</tr>
 				<tr><td>&nbsp;</td></tr>
 				<tr>
 					<td></td>
-					<td align="right"><a class="btn bg-success">Posalji</a></td>
+					<td align="right"><a class="btn bg-success" ng-click="posaljiPoruku()">Posalji</a></td>
 				</tr>
 			</table>
 		</div>
@@ -140,7 +139,7 @@
 	<div class="col-xs-3">
 		<div class="well">
 			<p><h4><i>Konzola</i></h4></p>
-			<textarea style="background-color: white;" class="form-control" readonly="readonly" rows="12" cols="5"></textarea>
+			<textarea style="background-color: white;" id="konzola" class="form-control" readonly="readonly" rows="12" cols="5"></textarea>
 		</div>
 	</div>
 

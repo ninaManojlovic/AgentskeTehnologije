@@ -15,7 +15,7 @@ public class ACLMessage implements Serializable{
 	
 	private Performative performative;
 	private AID sender;
-	private ArrayList<AID> receivers;
+	private AID receivers;
 	private AID replyTo;
 	private String content;
 	private Object contentObject;
@@ -30,11 +30,15 @@ public class ACLMessage implements Serializable{
 	private Long replyBy;
 	
 	public ACLMessage(){
-		receivers=new ArrayList<AID>();
+		
 		userArgs=new HashMap<String,Object>();
 	}
+	
+	public ACLMessage(String acl){
+		
+	}
 
-	public ACLMessage(Performative performative, AID sender, ArrayList<AID> receivers, AID replyTo, String content,
+	public ACLMessage(Performative performative, AID sender, AID receivers, AID replyTo, String content,
 			Object contentObject, HashMap<String, Object> userArgs, String language, String encoding, String ontology,
 			String protocol, String conversationId, String replyWith, String inReplyTo, Long replyBy) {
 		super();
@@ -53,6 +57,7 @@ public class ACLMessage implements Serializable{
 		this.replyWith = replyWith;
 		this.inReplyTo = inReplyTo;
 		this.replyBy = replyBy;
+		this.receivers=receivers;
 	}
 
 	public Performative getPerformative() {
@@ -71,11 +76,11 @@ public class ACLMessage implements Serializable{
 		this.sender = sender;
 	}
 
-	public ArrayList<AID> getReceivers() {
+	public AID getReceiver() {
 		return receivers;
 	}
 
-	public void setReceivers(ArrayList<AID> receivers) {
+	public void setReceivers(AID receivers) {
 		this.receivers = receivers;
 	}
 

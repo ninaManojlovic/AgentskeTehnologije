@@ -1,9 +1,14 @@
 package agents;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.json.Json;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -11,13 +16,21 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import agent.pingPong.Ping;
 import agent.pingPong.Pong;
 import jms.JMSProducer;
+import message.ACLMessage;
+import message.Performative;
 import node.StartApp;
 
 @Path("/agent")
@@ -31,12 +44,12 @@ public class AgentController {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/startAgent/{type}/{name}")
-	public String startAgent(@PathParam("type") String type1,@PathParam("name") String name){
+	public String startAgent(@PathParam("type") String type,@PathParam("name") String name){
 		
 	//	int br=Integer.parseInt(type);
 		
-		int br=Integer.valueOf(type1);
-		String type=AgentTypesEnum.values()[br].toString();
+		//int br=Integer.valueOf(type1);
+		//String type=AgentTypesEnum.values()[br].toString();
 		
 		System.out.println("pogodio rest iz angulara: "+type+name);
 		
@@ -45,22 +58,139 @@ public class AgentController {
 		AID aid=new AID(name, ac, at);
 		
 		AbstractAgent agent=null;
-		if(at.getName().equals(AgentTypesEnum.PING)){
+		String povratniTip="";
+		
+		System.out.println("!!!!!!!!!!!!: "+at.getName());
+		if(at.getName().equals(AgentTypesEnum.PING.toString())){
 			System.out.println("usao u ping");
 			agent=new Ping(aid);
-		}else if(at.getName().equals(AgentTypesEnum.PONG)){
+			povratniTip=agent.getAid().getType().getName();
+		}else if(at.getName().equals(AgentTypesEnum.PONG.toString())){
 			agent=new Pong(aid);
-		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE)){
+			povratniTip=agent.getAid().getType().getName();
+		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE.toString())){
 			
-		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET)){
+		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET.toString())){
 			
 		}
-		if(agent==null){
-			System.out.println("JEsil null");
-		}else{
-			System.out.println("nope");
-		}		
-		am.addRunning(aid, agent);
-		return "dd";//agent.getAID().getName();
+		//PROVERA DA NE MOGU DA SE DODAJU 2 AGENTA SA ISTIM IMENOM
+		  boolean ok=true;
+		  for(AbstractAgent aa:am.getRunning().values()){
+		   if(aa.getAid().getName().equals(name)){
+		    ok=false;
+		   }
+		  }
+		   if(ok){
+		   am.addRunning(aid, agent);
+		   return povratniTip;
+		   }else{
+		    return null;
+		   }
+	
+	
 	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/runningAgents")
+	public List<AbstractAgent> getRunning(){
+		
+		List<AbstractAgent> lista=new ArrayList<AbstractAgent>();
+		
+		for(AbstractAgent a:am.getRunning().values()){
+			lista.add(a);
+		}
+		return lista;
+	}
+	
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/sendMessage/{tipPoruke}/{sender}/{receiver}/{content}")
+	public void sendMessage(@PathParam("tipPoruke") String tipPoruke,@PathParam("sender") String sender,@PathParam("receiver") String receiver,@PathParam("content") String content) throws JsonParseException, JsonMappingException, IOException, JSONException{
+		
+		//ObjectMapper mapper=new ObjectMapper();
+	
+		int perf=Integer.parseInt(tipPoruke);
+		String perfomativa=Performative.values()[perf].toString();
+		String message=perfomativa+"/"+sender+"/"+receiver+"/"+content;
+	
+		System.out.println("DA LI JE PRIMIOO " +message);	
+		
+		AbstractAgent posiljalac=null;
+		AbstractAgent primalac=null;
+		
+		for(AID aid:am.getRunning().keySet()){
+			if(aid.getName().equals(sender)){
+				posiljalac=am.getRunning().get(aid);
+				break;
+			}
+		}
+		
+		for(AID aid:am.getRunning().keySet()){
+			if(aid.getName().equals(receiver)){
+				primalac=am.getRunning().get(aid);
+				break;
+			}
+		}
+		
+		if(posiljalac!=null && primalac!=null){
+			System.out.println("nadjeni su:"+posiljalac.aid.getName()+" primalac: "+primalac.getAid().getName());
+		}
+		
+		/*try {
+			
+			
+			
+			
+			System.out.println(obj);
+	
+			
+			System.out.println("prosaoprva tri");
+			
+			
+			
+			System.out.println("sender ime: "+poruka.getSender().getName());
+			System.out.println("primio ime: "+poruka.getReceiver().getName());
+			System.out.println("kontent: "+poruka.getContent());
+			
+			System.out.println(sender.getName()+sender.getHost().getPort()+sender.getType().getName());
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		/*
+			ACLMessage poruka;
+			try {
+				JSONObject obj=new JSONObject(message);
+				AID sender=mapper.readValue(obj.get("sender").toString(), AID.class);
+				//AID reciever=mapper.readValue(obj.get("receivers").toString(), AID.class);
+				//String content=mapper.readValue(obj.get("content").toString(), String.class);
+				
+				//poruka = mapper.readValue(message, ACLMessage.class);
+				poruka=new ACLMessage();
+				
+				poruka.setSender(sender);
+				//poruka.setReceivers(reciever);
+				//poruka.setContent(content);
+				
+				System.out.println("sender ime: "+poruka.getSender().getName());
+				System.out.println("primio ime: "+poruka.getReceiver().getName());
+				System.out.println("kontent: "+poruka.getContent());
+			} catch (JsonParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+	*/
+		//System.out.println("pogodio rest za send poruku: "+poruka);
+		//System.out.println(poruka.getPerformative());
+		
+	}		
 }

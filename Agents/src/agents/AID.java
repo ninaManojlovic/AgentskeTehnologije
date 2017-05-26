@@ -13,6 +13,10 @@ public class AID implements Serializable{
 	private AgentCenter host;
 	private AgentType type;
 	
+	public AID(String aid){
+		
+	}
+	
 	public AID(){
 		
 	}
