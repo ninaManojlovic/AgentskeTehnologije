@@ -43,7 +43,7 @@ public class NodeController {
 
 			   for (AgentCenter h : nodes.getNodes()) {
 
-				   System.out.println("gadja update na: "+h.getAddress()+":"+h.getPort());
+				   System.out.println("master gadja update na: "+h.getAddress()+":"+h.getPort());
 			    ResteasyClient client = new ResteasyClientBuilder().build();
 			    ResteasyWebTarget target = client
 		//	      .target("http://" + h.getAddress()+":"+h.getPort() + "/Agents/rest/node/updateNodes");
@@ -65,7 +65,8 @@ public class NodeController {
 	 public void updateNodes(List<AgentCenter> newNodes) {
 	  ArrayList<AgentCenter> newList = (ArrayList<AgentCenter>) newNodes;
 	  nodes.setNodes(newList);
-	  System.out.println("ima " + nodes.getNodes().size() + " cvorova");
+	  System.out.println("usao u update metodu na cvoru: "+StartApp.getPort());
+	  System.out.println("i sad ima u listi " + nodes.getNodes().size() + " cvorova");
 
 	 }
 	
@@ -86,12 +87,15 @@ public class NodeController {
 	  }
 
 	  for (AgentCenter h : nodes.getNodes()) {
-		  System.out.println("salje update na: "+h.getAddress()+" "+h.getPort());
+		 // System.out.println("salje update na: "+h.getAddress()+" "+h.getPort());
 	   ResteasyClient client = new ResteasyClientBuilder().build();
+	  
 	   ResteasyWebTarget target = client
 			      .target("http://" + h.getAddress()+":"+h.getPort() + "/Agents/rest/node/updateNodes");
 
 	   Response response = target.request().post(Entity.entity(nodes.getNodes(), "application/json"));
+	   
+
 
 	   String ret = response.readEntity(String.class);
 

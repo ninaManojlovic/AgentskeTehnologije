@@ -41,10 +41,9 @@ public class Nodes implements Serializable{
 		master= new AgentCenter(StartApp.getMasterAddress(), StartApp.getMasterPort(), StartApp.getMasterAlias());
 	
 		nodes.add(master);
-		System.out.println("postCONStruct##################");
 		if (!master.getPort().equals(current.getPort())) {
 			   ResteasyClient client = new ResteasyClientBuilder().build();
-System.out.println("jesi usoooOooOoOoOO");
+System.out.println("Cvor je slave, gadja mastera za registraciju");
 			   ResteasyWebTarget target = client
 			    // .target("http://" + master.getAddress() + ":" + master.getPort() + "/Agents/rest/node/registerNode/"+current.getAddress()+"/"+current.getPort()+"/"+current.getAlias());
 					   .target("http://localhost:"+ master.getPort() + "/Agents/rest/node/registerNode/"+current.getAddress()+"/"+current.getPort()+"/"+current.getAlias());
@@ -74,7 +73,7 @@ System.out.println("jesi usoooOooOoOoOO");
 			   }
 
 			   setNodes(lista);
-
+System.out.println(StartApp.getPort()+" cvor ima listu od: "+nodes.size());
 			  }
 			 }
 	

@@ -8,25 +8,25 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
-
+import javax.ejb.Stateless;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-
 import javax.ws.rs.core.Response;
-
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.json.JSONArray;
 import org.json.JSONException;
-
+import agents.AID;
 import agents.AbstractAgent;
-import agents.AgentCenter;
+import agents.AgentController;
+import agents.AgentManager;
 import node.Nodes;
+@Stateless
 @ServerEndpoint("/websocket")
 public class WsEndpoint {
 
@@ -37,6 +37,9 @@ public class WsEndpoint {
 
 	 @EJB
 	 Nodes node;
+	 
+	@EJB
+	 AgentManager am;
 	 
 	 @OnOpen
 	 public void open(Session session) {
@@ -74,7 +77,7 @@ public class WsEndpoint {
 
 	   ResteasyClient client = new ResteasyClientBuilder().build();
 	   ResteasyWebTarget target = client.target(
-	     "http://localhost:" + port + "/Agents/rest/agent/startAgent/" + tipAgenta + "/" + imeAgenta);
+	     "http://localhost:" + port + "/Agents/rest/agent/startAgent/" + tipAgenta + "/" + imeAgenta+"/"+port);
 	   Response response = target.request().get();
 	   String ret = response.readEntity(String.class);
 	   System.out.println("RET /**************" + ret);
@@ -83,10 +86,12 @@ public class WsEndpoint {
 	   if (ret != null) {
 	    
 	    try {
+	    	System.out.println("??????????????????????????????????");
 	     log.info("Websocket endpoint: " + this.hashCode() + " primio: " + porukaZaJS + " u sesiji: "
 	       + session.getId());
+	     System.out.println("Lista sesija ima: "+sessions.size());
 	     for (Session s : sessions) {
-
+System.out.println("sesijaaaaaaaa: "+s.toString());
 	      s.getBasicRemote().sendText(porukaZaJS);
 	      log.info("Sending '" + porukaZaJS + "' to : " + s.getId());
 
@@ -155,8 +160,47 @@ public class WsEndpoint {
 	     }
 	    }
 	   }
-	  } else if (tip == "Neki drugi") {
+	  } else if (tip.equals("Message")) {
 
+		  System.out.println("usao u metodu message u ws endpointu"+message);
+		  
+		  String preformative=poruka[1];
+		  String sender=poruka[2];
+		  String receiver=poruka[3];
+		  String content=poruka[4];
+		  
+
+			AbstractAgent posiljalac=null;
+			AbstractAgent primalac=null;
+			
+			System.out.println(preformative+sender+receiver+content);
+			
+			System.out.println("runningggg:"+am);
+			
+			for(AID aid:am.getRunning().keySet()){
+				if(aid.getName().equals(sender)){
+					posiljalac=am.getRunning().get(aid);
+					break;
+				}
+			}
+			
+			for(AID aid:am.getRunning().keySet()){
+				System.out.println("agent sa imenom:"+ aid.getName());
+				if(aid.getName().equals(receiver)){
+					primalac=am.getRunning().get(aid);
+					System.out.println("primalac: "+aid.getName());
+					break;
+				}
+			}
+			
+			
+			System.out.println("gadja    http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" + preformative + "/" + sender+"/"+receiver+"/"+content);
+		  
+		  ResteasyClient client = new ResteasyClientBuilder().build();
+		   ResteasyWebTarget target = client.target(
+		     "http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" + preformative + "/" + sender+"/"+receiver+"/"+content);
+		   Response response = target.request().get();
+		   String ret = response.readEntity(String.class);
 	  }
 
 	 }

@@ -1,10 +1,16 @@
 package agents;
 
+import javax.ejb.EJB;
+
 import message.ACLMessage;
 
 public abstract class AbstractAgent {//implements Agent{
 	
 	protected AID aid;
+	
+	public AbstractAgent(){
+		
+	}
 	
 	public AbstractAgent(AID aid){
 		this.aid=aid;
@@ -29,6 +35,8 @@ public abstract class AbstractAgent {//implements Agent{
 	public void setAid(AID aid) {
 		this.aid = aid;
 	}
+
+
 	
 	
 }

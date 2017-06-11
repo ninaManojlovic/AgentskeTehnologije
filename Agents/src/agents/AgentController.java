@@ -5,55 +5,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.json.Json;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import agent.pingPong.Ping;
 import agent.pingPong.Pong;
-import jms.JMSProducer;
+import agent.pingPong.WordCounter;
+import jms.JMSProducer2;
 import message.ACLMessage;
 import message.Performative;
+import node.Nodes;
 import node.StartApp;
 
+
+@LocalBean
 @Path("/agent")
+@Stateless
 public class AgentController {
 	
 	@EJB
 	AgentManager am;
-	@EJB
-	JMSProducer jmsp;
 
+@EJB
+Nodes nodes;
+	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/startAgent/{type}/{name}")
-	public String startAgent(@PathParam("type") String type,@PathParam("name") String name){
+	@Path("/startAgent/{type}/{name}/{port}")
+	public String startAgent(@PathParam("type") String type,@PathParam("name") String name, @PathParam("port") String port1){
 		
 	//	int br=Integer.parseInt(type);
 		
 		//int br=Integer.valueOf(type1);
 		//String type=AgentTypesEnum.values()[br].toString();
 		
-		System.out.println("pogodio rest iz angulara: "+type+name);
+		System.out.println("pogodio rest iz angulara na portu: "+StartApp.getPort()+" dobio: "+type+name);
 		
-		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), StartApp.getPort(), StartApp.getCurrentName());
+		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), port1, StartApp.getCurrentName());
+		
 		AgentType at=new AgentType(type, "ag");
 		AID aid=new AID(name, ac, at);
 		
@@ -69,7 +73,7 @@ public class AgentController {
 			agent=new Pong(aid);
 			povratniTip=agent.getAid().getType().getName();
 		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE.toString())){
-			
+			agent=new WordCounter(aid);
 		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET.toString())){
 			
 		}
@@ -82,6 +86,14 @@ public class AgentController {
 		  }
 		   if(ok){
 		   am.addRunning(aid, agent);
+		   for(AgentCenter a:nodes.getNodes()) {
+			   ResteasyClient client = new ResteasyClientBuilder().build();
+			   ResteasyWebTarget target = client.target(
+			     "http://localhost:" + a.getPort() + "/Agents/rest/agent/startAgent/" + type + "/" + name+"/"+port1);
+			  Response response = target.request().get();
+			   String ret = response.readEntity(String.class);
+		   }
+		   System.out.println("dodao novog agenta u listu running");
 		   return povratniTip;
 		   }else{
 		    return null;
@@ -192,5 +204,41 @@ public class AgentController {
 		//System.out.println("pogodio rest za send poruku: "+poruka);
 		//System.out.println(poruka.getPerformative());
 		
-	}		
+	}
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/proslediPoruku/{pref}/{sender}/{rec}/{content}")
+	public void proslediPoruku(@PathParam("pref") String pref,@PathParam("sender") String sender,@PathParam("rec") String rec,@PathParam("content") String content){
+	
+		System.out.println("usao u rest end point prosledi poruku");
+		
+		AbstractAgent posiljalac=null;
+		AbstractAgent primalac=null;
+		int br=Integer.parseInt(pref);
+		Performative per=Performative.values()[br];
+		
+		for(AID aid:am.getRunning().keySet()){
+			if(aid.getName().equals(sender)){
+				posiljalac=am.getRunning().get(aid);
+				break;
+			}
+		}
+		
+		for(AID aid:am.getRunning().keySet()){
+			if(aid.getName().equals(rec)){
+				primalac=am.getRunning().get(aid);
+				break;
+			}
+		}
+		
+		ACLMessage acl=new ACLMessage();//(per, posiljalac.getAid(), primalac.getAid(), replyTo, content, contentObject, userArgs, language, encoding, ontology, protocol, conversationId, replyWith, inReplyTo, replyBy)
+		acl.setPerformative(per);
+		acl.setSender(posiljalac.getAid());
+		acl.setReceivers(primalac.getAid());
+		acl.setContent(content);
+		
+		JMSProducer2.sendJMS(acl);
+	}
+		
 }

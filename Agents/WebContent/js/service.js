@@ -1,10 +1,11 @@
 app.factory('service',['$http', function($http,$scope){
 	var k={};
-	
+	//k.socket={};
 	k.startAgent=function(name,type){
 	
 		console.log("usao u func u servisu: "+name+type);
-		var t= $http.get('/Agents/rest/agent/startAgent/'+type+'/'+name);
+		var port = window.location.port;
+		var t= $http.get('/Agents/rest/agent/startAgent/'+type+'/'+name+'/'+port);
 		console.log("return iz servidsa: "+t);
 		return t;
 	
@@ -24,19 +25,14 @@ app.factory('service',['$http', function($http,$scope){
 		
 	}
 	
-/*	return $http({
-		method: 'POST',
-		url: '/Agents/rest/agent/sendMessage',
-		headers: {'Content-Type' : 'application/json'},
-		data: nesto,
-		dataType:"json"
-		
-	});*/
-		
+
+
+	
 		k.initSocket=function(){
+			console.log("usao u initSocket");
 			document.getElementById("rest").disabled = true;
 			 
-			 var host = "ws://localhost:8090/Agents/websocket";
+			 var host = "ws://localhost:"+window.location.port+"/Agents/websocket";
 			 var poruka="";
 			  try {
 			   socket = new WebSocket(host);
@@ -49,39 +45,40 @@ app.factory('service',['$http', function($http,$scope){
 			    + ' (open)\n'
 			   }
 
-			   socket.onmessage = function(msg) {
-			    //var n=(msg.toString()).split(";");
-			    var str=msg.data.toString();
-			    var n=str.split(";");
-			    console.log("ONMESSAGEEEE " + n[0]);
-			   // n.push(msg.split(';'))
-			    if(n[0]=="Create"){
-			     
-			     console.log('onmessage. Received: ' + n[1] + "\n");
-			     var currentdate = new Date();
-			     var konz= document.getElementById("konzola");
-			     konz.value+=currentdate.getHours() + ":" 
-			     + currentdate.getMinutes() + ":" + currentdate.getSeconds()+" - " +n[1] + "\n";
-			    }else if(n[0]=="Refresh"){
-			     
-			     var lista=n[1];
-			     console.log("ONO STO SAM DOBILA: " + lista);
-			     
-			     return lista;
-			     //$scope.agents=lista;
-			     //var split=lista.split(',');
-			     //console.log("SPLIT: " + split);
-			    /* var sel=document.getElementById("posiljalac");
-			     var select = sel,
-			        opt = document.createElement("option");
-			     opt.value = "value";
-			     opt.textContent = "text to be displayed";
-			     select.appendChild(opt)*/
-			     
-			     
-			    }
-			    
-			   }
+				socket.onmessage = function(msg) {
+				    //var n=(msg.toString()).split(";");
+				    var str=msg.data.toString();
+				    var n=str.split(";");
+				    console.log("ONMESSAGEEEE " + n[0]);
+				   // n.push(msg.split(';'))
+				    if(n[0]=="Create"){
+				     
+				     console.log('onmessage. Received: ' + n[1] + "\n");
+				     var currentdate = new Date();
+				     var konz= document.getElementById("konzola");
+				     konz.value+=currentdate.getHours() + ":" 
+				     + currentdate.getMinutes() + ":" + currentdate.getSeconds()+" - " +n[1] + "\n";
+				     console.log('KonZOLAaa ' + konz.value);
+				    }else if(n[0]=="Refresh"){
+				     
+				     var lista=n[1];
+				     console.log("ONO STO SAM DOBILA: " + lista);
+				     
+				     return lista;
+				     //$scope.agents=lista;
+				     //var split=lista.split(',');
+				     //console.log("SPLIT: " + split);
+				    /* var sel=document.getElementById("posiljalac");
+				     var select = sel,
+				        opt = document.createElement("option");
+				     opt.value = "value";
+				     opt.textContent = "text to be displayed";
+				     select.appendChild(opt)*/
+				     
+				     
+				    }
+				    
+				   }
 
 			   socket.onclose = function() {
 			    console.log('onsclose. Socket Status: ' + socket.readyState
@@ -103,6 +100,7 @@ app.factory('service',['$http', function($http,$scope){
 			   var domain = window.location.hostname;
 			   var port = window.location.port;
 			   var por="Create;"+imeAgenta+";"+selekt+";"+domain+";"+port;
+			   console.log("start agent service: "+por)
 			   socket.send(por);
 	}	
 		

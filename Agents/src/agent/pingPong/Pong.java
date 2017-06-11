@@ -1,20 +1,50 @@
 package agent.pingPong;
 
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Remote;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.naming.InitialContext;
+
 import agents.AID;
 import agents.AbstractAgent;
+import agents.Agent;
+import agents.AgentManager;
+import jms.JMSProducer2;
 import message.ACLMessage;
+import message.Performative;
 
-public class Pong extends AbstractAgent{
+public class Pong extends AbstractAgent implements Serializable{
+
 
 	public Pong(AID aid) {
 		super(aid);
-		// TODO Auto-generated constructor stub
 	}
+	
+
 
 	@Override
 	protected void onMessage(ACLMessage message) {
-		// TODO Auto-generated method stub
 		
+		if(message.getPerformative().equals(Performative.REQUEST)){
+		
+		System.out.println("I'm PONG, and I receve meesage from PING");
+		
+		ACLMessage odgovor=new ACLMessage();
+		odgovor.setSender(message.getReceiver());
+		odgovor.setReceivers(message.getSender());
+		odgovor.setPerformative(Performative.AGREE);
+		odgovor.setContent("PONG recevied message, and send message back");
+		
+		JMSProducer2.sendJMS(odgovor);
+		}
 	}
 
 

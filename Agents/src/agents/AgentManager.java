@@ -1,12 +1,15 @@
 package agents;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-
+import javax.ejb.Startup;
+@Startup
 @Singleton
-public class AgentManager {
+public class AgentManager implements Serializable {
 	
 	private HashMap<AID, AbstractAgent> existing;
 	private HashMap<AID, AbstractAgent> running;

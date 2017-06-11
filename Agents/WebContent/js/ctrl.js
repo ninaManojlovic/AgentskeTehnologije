@@ -48,7 +48,8 @@ app.controller('ctrl', function ($scope,$rootScope,$window, $http, service) {
 			})
 			$scope.poruka="";
 	}else{
-		console.log("ws posalji poruku");
+		console.log("ws posalji poruku")//+$scope.receivers.aid.name+" port: "+$scope.receivers.aid.host.port);
+		service.posaljiPorukuWS($scope.tipPoruke,$scope.sender,$scope.receivers,$scope.content)
 	}
 	}
 });

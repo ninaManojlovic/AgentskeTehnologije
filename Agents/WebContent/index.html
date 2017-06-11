@@ -24,6 +24,7 @@
   <script src="js/app.js"></script>
 <script src="js/ctrl.js"></script>
 <script src="js/service.js"></script>
+<script src="js/socketService.js"></script>
 </head>
 <body style="background-color:#FBFCC6" ng-controller='ctrl' ng-init="getRunning()">
 
@@ -34,7 +35,8 @@
 <div>
 <div class="row container center">
 <button class="btn btn-default" value="rest" id="rest" ng-click="radiRest()" >Rest</button>
- <button class="btn btn-default" value="websocket" ng-click="radiWebsocket();initSocket()" id="websocket" >Websocket</button>
+ <!--  <button class="btn btn-default" value="websocket" onclick="soket()" id="websocket" >Websocket</button>-->
+<button class="btn btn-default" value="websocket" ng-click="radiWebsocket();initSocket()" id="websocket" >Websocket</button>
    <div class="col-xs-offset-2">
    <button class="btn btn-success " data-toggle="modal" data-target="#myModal">Dodavanje agenta</button>
    
@@ -54,6 +56,7 @@
          	 	<select  name="tipAgenta" class="form-control" required="required" ng-model="type">
          	 		<option value="PING">Ping</option>
          	 		<option value="PONG">Pong</option>
+         	 		<option value="MAPREDUCE">WordCounter</option>
          	 	</select>
          	 </p>
         </div>
