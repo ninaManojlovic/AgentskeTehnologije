@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.ejb.EJB;
+import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -26,14 +27,15 @@ import agents.AbstractAgent;
 import agents.AgentController;
 import agents.AgentManager;
 import node.Nodes;
-@Stateless
+
+@Stateful
 @ServerEndpoint("/websocket")
 public class WsEndpoint {
 
 
 	 
 	 Logger log = Logger.getLogger("Websockets endpoint");
-	 List<Session> sessions = new ArrayList<Session>();
+	 static List<Session> sessions = new ArrayList<Session>();
 
 	 @EJB
 	 Nodes node;
@@ -52,6 +54,7 @@ public class WsEndpoint {
 
 	 @OnClose
 	 public void close(Session session) {
+		 sessions.remove(session);
 	 }
 
 	 @OnError
@@ -73,7 +76,7 @@ public class WsEndpoint {
 	   String tipAgenta = poruka[2];
 	   String port = poruka[4];
 
-	   String porukaZaJS = "Create;Agent " + imeAgenta + " kreiran.";
+	   String porukaZaJS = "Create|Agent " + imeAgenta + " kreiran.";
 
 	   ResteasyClient client = new ResteasyClientBuilder().build();
 	   ResteasyWebTarget target = client.target(
@@ -129,7 +132,7 @@ System.out.println("sesijaaaaaaaa: "+s.toString());
 	        e.printStackTrace();
 	       }
 	    
-	       String porukaRefresh="Refresh;"+lista;
+	       String porukaRefresh="Refresh|"+lista;
 	    
 	    
 	    
@@ -207,6 +210,11 @@ System.out.println("sesijaaaaaaaa: "+s.toString());
 
 	 public void addSession(Session session) {
 	  sessions.add(session);
+	 }
+	 public static void posaljiOdgovor(String odgovor) throws IOException{
+		 for (Session s : sessions) {
+			 	      s.getBasicRemote().sendText(odgovor);
+		 }
 	 }
 
 }

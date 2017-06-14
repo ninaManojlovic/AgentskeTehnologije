@@ -30,6 +30,7 @@ public class JMSProducer2 {
 			QueueSender sender=sessionPublish.createSender(queue1);
 			
 			ObjectMessage om=sessionPublish.createObjectMessage(message);
+			System.out.println(message.getSender().getName() +" salje JMS-om "+message.getReceiver().getName()+" performativa: "+message.getPerformative()+" sadrzaj:"+message.getContent());
 			sender.send(om);
 			connection.close();
 		}catch(Exception e){

@@ -44,7 +44,7 @@ public class WordCounterSlave extends AbstractAgent{
             
             ACLMessage odgovor=new ACLMessage();
             odgovor.setContent(String.valueOf(cnt));
-            odgovor.setPerformative(Performative.INFORM);
+            odgovor.setPerformative(Performative.AGREE);
             odgovor.setSender(message.getReceiver());
             odgovor.setReceivers(message.getSender());
             

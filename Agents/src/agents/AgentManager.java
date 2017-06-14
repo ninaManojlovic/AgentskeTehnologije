@@ -12,7 +12,7 @@ import javax.ejb.Startup;
 public class AgentManager implements Serializable {
 	
 	private HashMap<AID, AbstractAgent> existing;
-	private HashMap<AID, AbstractAgent> running;
+	public HashMap<AID, AbstractAgent> running;
 	
 	
 	public AgentManager(){
@@ -44,5 +44,4 @@ public class AgentManager implements Serializable {
 	public void addRunning(AID aid, AbstractAgent agent){
 		running.put(aid, agent);
 	}
-
 }

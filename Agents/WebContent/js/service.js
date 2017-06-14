@@ -48,7 +48,7 @@ app.factory('service',['$http', function($http,$scope){
 				socket.onmessage = function(msg) {
 				    //var n=(msg.toString()).split(";");
 				    var str=msg.data.toString();
-				    var n=str.split(";");
+				    var n=str.split("|");
 				    console.log("ONMESSAGEEEE " + n[0]);
 				   // n.push(msg.split(';'))
 				    if(n[0]=="Create"){
@@ -76,6 +76,10 @@ app.factory('service',['$http', function($http,$scope){
 				     select.appendChild(opt)*/
 				     
 				     
+				    }else if(n[0]=="Inform"){
+				    
+				    	var konz= document.getElementById("konzola");
+				    	konz.value+=n[1]
 				    }
 				    
 				   }

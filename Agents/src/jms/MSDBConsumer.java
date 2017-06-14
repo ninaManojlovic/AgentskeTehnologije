@@ -72,7 +72,7 @@ public class MSDBConsumer implements MessageListener{
 	  Performative tipPoruke=message.getPerformative();
 	  String content=message.getContent();
 	  
-	  System.out.println("MSDB primio poruku, posiljalac: "+odKoga.getName()+" za: "+primalac.getName()+" perfomativa: "+tipPoruke+" content: "+content);
+	 // System.out.println("MSDB primio poruku, posiljalac: "+odKoga.getName()+" za: "+primalac.getName()+" perfomativa: "+tipPoruke+" content: "+content);
 	  //if(tipPoruke.equals(Performative.))
 	  
 	  AbstractAgent agentPrimalac=null;
@@ -82,7 +82,7 @@ public class MSDBConsumer implements MessageListener{
 		break;
 		  }
 	  }
-	  System.out.println("agentprimalac je:"+agentPrimalac);
+	  System.out.println("agentprimalac je:"+agentPrimalac.getAid().getName());
 	  agentPrimalac.handleMessage(message);
 	  
 	  
