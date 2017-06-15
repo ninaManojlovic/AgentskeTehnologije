@@ -65,15 +65,7 @@ app.factory('service',['$http', function($http,$scope){
 				     console.log("ONO STO SAM DOBILA: " + lista);
 				     
 				     return lista;
-				     //$scope.agents=lista;
-				     //var split=lista.split(',');
-				     //console.log("SPLIT: " + split);
-				    /* var sel=document.getElementById("posiljalac");
-				     var select = sel,
-				        opt = document.createElement("option");
-				     opt.value = "value";
-				     opt.textContent = "text to be displayed";
-				     select.appendChild(opt)*/
+				    
 				     
 				     
 				    }else if(n[0]=="Inform"){

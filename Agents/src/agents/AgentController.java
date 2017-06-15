@@ -154,8 +154,14 @@ Nodes nodes;
 		}
 		
 		if(posiljalac!=null && primalac!=null){
-			System.out.println("nadjeni su:"+posiljalac.aid.getName()+" primalac: "+primalac.getAid().getName());
+			System.out.println("nadjeni su:"+posiljalac.getAid().getName()+" primalac: "+primalac.getAid().getName());
 		}
+		
+		 ResteasyClient client = new ResteasyClientBuilder().build();
+		   ResteasyWebTarget target = client.target(
+		     "http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" + tipPoruke + "/" + sender+"/"+receiver+"/"+content);
+		   Response response = target.request().get();
+		   String ret = response.readEntity(String.class);
 		
 		/*try {
 			

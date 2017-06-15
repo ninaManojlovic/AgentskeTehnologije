@@ -16,6 +16,16 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.4/angular-material.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
 
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#myModal1').modal('show');
+    });
+
+    function zatvori(){
+     $('#myModal1').modal('hide');
+    };
+</script>
+
   <style type="text/css">
   	.well {
    background-color: rgba(0, 0, 0, 0.3);
@@ -34,9 +44,23 @@
 
 <div>
 <div class="row container center">
-<button class="btn btn-default" value="rest" id="rest" ng-click="radiRest()" >Rest</button>
+<div class="modal fade" id="myModal1" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+         
+          <h4 class="modal-title">Izaberite opciju: </h4>
+        </div>
+        <div class="modal-body">
+
+<button class="btn btn-default" value="rest" id="rest" ng-click="radiRest()" onclick="zatvori()" >Rest</button>
  <!--  <button class="btn btn-default" value="websocket" onclick="soket()" id="websocket" >Websocket</button>-->
-<button class="btn btn-default" value="websocket" ng-click="radiWebsocket();initSocket()" id="websocket" >Websocket</button>
+<button class="btn btn-default" value="websocket" ng-click="radiWebsocket();initSocket()" id="websocket" onclick="zatvori()">Websocket</button>
+</div>
+        </div>
+        </div>
+        </div>
+
    <div class="col-xs-offset-2">
    <button class="btn btn-success " data-toggle="modal" data-target="#myModal">Dodavanje agenta</button>
    
