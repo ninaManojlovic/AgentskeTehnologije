@@ -125,7 +125,7 @@ public class ContractNet extends AbstractAgent{
 		}else if(message.getPerformative().toString().equals(Performative.REFUSE.toString())){
 			
 			brojac--;
-			System.out.println("brojac: "+brojac);
+			//System.out.println("brojac: "+brojac);
 			System.out.println(message.getReceiver().getName()+" dobio REFUSE od: "+message.getSender().getName());
 			
 			if(brojac==0){
@@ -135,7 +135,7 @@ public class ContractNet extends AbstractAgent{
 		}else if(message.getPerformative().toString().equals(Performative.PROPOSE.toString())){
 			
 			brojac--;
-			System.out.println("brojac: "+brojac);
+			//System.out.println("brojac: "+brojac);
 			mapa.put(message.getSender(), Integer.parseInt(message.getContent()));
 			
 			System.out.println(message.getReceiver().getName()+"  dobio PROPOSE od: "+message.getSender().getName());
@@ -162,7 +162,7 @@ public class ContractNet extends AbstractAgent{
 				ponudjaci+=aid.getName()+":"+mapa.get(aid)+" ";
 			}
 			
-			System.out.println("inicijator: "+inicijator+" LISTA:"+ponudjaci+" najbolji: "+najboljiA);
+			//System.out.println("inicijator: "+inicijator+" LISTA:"+ponudjaci+" najbolji: "+najboljiA);
 			
 			String sadrzaj="Inform|Iniciator: "+inicijator.getName()+" ponudjaci su: "+ponudjaci+" ,najbolji je: "+najboljiA.getName();
 			poruka.setContent(sadrzaj);

@@ -83,7 +83,7 @@ public class MSDBConsumer implements MessageListener{
 		break;
 		  }
 	  }
-	  System.out.println("agentprimalac je:"+agentPrimalac.getAid().getName());
+	  System.out.println("agent primalac je:"+agentPrimalac.getAid().getName());
 	  agentPrimalac.handleMessage(message);
 	  
 	  

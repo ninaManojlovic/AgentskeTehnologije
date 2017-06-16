@@ -60,13 +60,11 @@ public class Ping extends AbstractAgent {
 			}
 		}else{
 		
-		System.out.println("Posiljalac"+posiljalac.getName());
 		
 		if(odgovor.getSender().getHost().getPort().equals(odgovor.getReceiver().getHost().getPort())){
 			JMSProducer2.sendJMS(odgovor);
 		}else{
-			System.out.println("is agree mora da gadja rest: "
-				+	"http://localhost:" + odgovor.getReceiver().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" +pref + "/" + odgovor.getSender().getName()+"/"+odgovor.getReceiver().getName()+"/"+odgovor.getContent());
+			System.out.println("Gadja se rest na: "+odgovor.getReceiver().getHost().getPort());
 			 ResteasyClient client = new ResteasyClientBuilder().build();
 			   ResteasyWebTarget target = client.target(
 			     "http://localhost:" + odgovor.getReceiver().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" +pref + "/" + odgovor.getSender().getName()+"/"+odgovor.getReceiver().getName()+"/"+odgovor.getContent());
@@ -77,7 +75,7 @@ public class Ping extends AbstractAgent {
 		
 	}else if(message.getPerformative().equals(Performative.REQUEST)){
 		posiljalac=message.getSender();
-		System.out.println("Posiljalac je: "+message.getSender().getName());
+		//System.out.println("Posiljalac je: "+message.getSender().getName());
 		System.out.println("I'm PING and I'm sending mesage to PONG");
 		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), StartApp.getPort(), StartApp.getCurrentName());
 		AgentType at=new AgentType(AgentTypesEnum.PONG.toString(), "ag");
@@ -93,7 +91,6 @@ public class Ping extends AbstractAgent {
 		
 		pongAgent.handleMessage(poruka);
 	}else if(message.getPerformative().equals(Performative.INFORM)){
-		System.out.println("uso u inform: "+message.getContent());
 		try {
 			WsEndpoint.posaljiOdgovor(message.getContent());
 		} catch (IOException e) {

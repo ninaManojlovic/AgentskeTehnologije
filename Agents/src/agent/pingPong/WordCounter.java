@@ -43,15 +43,14 @@ public class WordCounter extends AbstractAgent{
 			brojRobova=0;
 			posiljalac=message.getSender();
 		String putanja=message.getContent();
-		
-		System.out.println("word counter metoda, posiljalac je: "+posiljalac.getName());
+		System.out.println("WordCounter handleMessage Request");
 		
 		File file=new File(putanja);
 		File[] file2=file.listFiles();
 		
 		for(int i=0; i<file2.length; i++){
 			if(file2[i].isFile()){
-				System.out.println(i+" Tekstualni file");
+				System.out.println("Kreiran WordCounterSlave");
 				
 				AgentType at=new AgentType(AgentTypesEnum.MAPREDUCE.toString(), "ag");
 				AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), StartApp.getPort(), StartApp.getCurrentName());
@@ -71,13 +70,13 @@ public class WordCounter extends AbstractAgent{
 	}else if(message.getPerformative().toString().equals(Performative.AGREE.toString())){
 		brojRobova--;
 		
-		System.out.println("Robovi vracaju rezultate, broj robova: "+brojRobova);
+		//System.out.println("Robovi vracaju rezultate, broj robova: "+brojRobova);
 		int broj=Integer.parseInt(message.getContent());
 		ukupanBroj+=broj;
-		System.out.println("WordCounterSlave vratio: "+broj+" ukupno file ima: "+ukupanBroj);
+	//	System.out.println("WordCounterSlave vratio: "+broj+" ukupno file ima: "+ukupanBroj);
 		
 		if(brojRobova==0){
-			System.out.println("//////SVI VRATILI///////");
+		//	System.out.println("//////SVI VRATILI///////");
 			ACLMessage odgovor=new ACLMessage();
 			odgovor.setPerformative(Performative.INFORM);
 			String perfomat=String.valueOf(Performative.INFORM.ordinal());
@@ -99,7 +98,7 @@ public class WordCounter extends AbstractAgent{
 			}			
 		}
 	}else if(message.getPerformative().equals(Performative.INFORM)){
-		System.out.println("uso u inform: "+message.getContent());
+	
 		try {
 			WsEndpoint.posaljiOdgovor(message.getContent());
 		} catch (IOException e) {

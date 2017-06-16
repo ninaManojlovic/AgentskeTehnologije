@@ -36,14 +36,14 @@ public class NodeController {
 	@Path("/registerNode/{address}/{port}/{alias}")
 	public List<AgentCenter> register(@PathParam("address") String address,@PathParam("port") String port,@PathParam("alias") String alias){
 		
-		System.out.println("usao u registar u masteru, registruje se: "+address+" "+port+" "+alias);
+		System.out.println("registracija slave cvora: "+port+" na master cvoru");
 		if (!(nodes.getCurrent().getAddress().equals(address)) || !(nodes.getCurrent().getAlias().equals(alias))
 			    || !(nodes.getCurrent().getPort().equals(port))) {
 			   nodes.getNodes().add(new AgentCenter(address, port, alias));
-
+			   //UPDATE OSTALIH CVOROVA DA JE DODAT NOVI CVOR
 			   for (AgentCenter h : nodes.getNodes()) {
 
-				   System.out.println("master gadja update na: "+h.getAddress()+":"+h.getPort());
+				   System.out.println("master gadja update na: "+h.getPort());
 			    ResteasyClient client = new ResteasyClientBuilder().build();
 			    ResteasyWebTarget target = client
 		//	      .target("http://" + h.getAddress()+":"+h.getPort() + "/Agents/rest/node/updateNodes");
@@ -54,7 +54,6 @@ public class NodeController {
 
 			   }
 			  }
-		System.out.println("pre return lista size: "+nodes.getNodes().size());
 			  return(List<AgentCenter>) nodes.getNodes();
 		
 	}
@@ -65,8 +64,8 @@ public class NodeController {
 	 public void updateNodes(List<AgentCenter> newNodes) {
 	  ArrayList<AgentCenter> newList = (ArrayList<AgentCenter>) newNodes;
 	  nodes.setNodes(newList);
-	  System.out.println("usao u update metodu na cvoru: "+StartApp.getPort());
-	  System.out.println("i sad ima u listi " + nodes.getNodes().size() + " cvorova");
+	 
+	  System.out.println("izvrsen update nodova, sada ima: " + nodes.getNodes().size() + " cvorova");
 
 	 }
 	
@@ -74,7 +73,7 @@ public class NodeController {
 	 @Path("/unregisterNode")
 	 @Consumes(MediaType.APPLICATION_JSON)
 	 public void unregister(AgentCenter host) {
-		 System.out.println("usao u unregister");
+		 System.out.println("usao u unregister na masteru");
 	  for (int i = 0; i < nodes.getNodes().size(); i++) {
 	   AgentCenter tren = nodes.getNodes().get(i);
 	   if (tren.getAddress().equals(host.getAddress()) && tren.getAlias().equals(host.getAlias())

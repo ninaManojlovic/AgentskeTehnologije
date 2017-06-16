@@ -10,7 +10,7 @@ public class AgentType implements Serializable{
 	private static final long serialVersionUID = -6281059676287693288L;
 
 	
-	private String name;
+	private String name;//IME TIPA AGENTA
 	private String module;
 	
 	public AgentType(){

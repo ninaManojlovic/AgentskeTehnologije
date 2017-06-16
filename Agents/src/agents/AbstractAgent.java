@@ -1,7 +1,5 @@
 package agents;
 
-import javax.ejb.EJB;
-
 import message.ACLMessage;
 
 public abstract class AbstractAgent {//implements Agent{

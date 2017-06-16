@@ -32,189 +32,168 @@ import node.Nodes;
 @ServerEndpoint("/websocket")
 public class WsEndpoint {
 
+	Logger log = Logger.getLogger("Websockets endpoint");
+	static List<Session> sessions = new ArrayList<Session>();
 
-	 
-	 Logger log = Logger.getLogger("Websockets endpoint");
-	 static List<Session> sessions = new ArrayList<Session>();
-
-	 @EJB
-	 Nodes node;
-	 
 	@EJB
-	 AgentManager am;
-	 
-	 @OnOpen
-	 public void open(Session session) {
-	  if (!sessions.contains(session)) {
-	   sessions.add(session);
-	   System.out.println("ON OPEEEEEEEEEEEEEEEEEEEEEEEN");
-	   log.info("Dodao sesiju: " + session.getId() + " u endpoint-u: " + this.hashCode() + ", ukupno sesija: " + sessions.size());
-	  }
-	 }
+	Nodes node;
 
-	 @OnClose
-	 public void close(Session session) {
-		 sessions.remove(session);
-	 }
+	@EJB
+	AgentManager am;
 
-	 @OnError
-	 public void onError(Throwable error) {
-	  System.out.println("USAO U ONEREOR " + error.getMessage());
-	 }
+	@OnOpen
+	public void open(Session session) {
+		if (!sessions.contains(session)) {
+			sessions.add(session);
+			System.out.println("ON OPEEEEEEEEEEEEEEEEEEEEEEEN");
+			log.info("Dodao sesiju: " + session.getId() + " u endpoint-u: " + this.hashCode() + ", ukupno sesija: "
+					+ sessions.size());
+		}
+	}
 
-	 @OnMessage
-	 public void handleMessage(String message, Session session) {
-	  System.out.println("SALJEEEEEEEEEEEEEEEEEE");
-	  System.out.println("DOSAO, poruka " + message);
-	  
-	  String poruka[] = message.split(";");
-	  String tip = poruka[0];
+	@OnClose
+	public void close(Session session) {
+		sessions.remove(session);
+	}
 
-	  if (tip.equals("Create")) {
+	@OnError
+	public void onError(Throwable error) {
+		System.out.println("USAO U ONEREOR " + error.getMessage());
+	}
 
-	   String imeAgenta = poruka[1];
-	   String tipAgenta = poruka[2];
-	   String port = poruka[4];
+	@OnMessage
+	public void handleMessage(String message, Session session) {
+		
+		String poruka[] = message.split(";");
+		String tip = poruka[0];
 
-	   String porukaZaJS = "Create|Agent " + imeAgenta + " kreiran.";
+		if (tip.equals("Create")) {
 
-	   ResteasyClient client = new ResteasyClientBuilder().build();
-	   ResteasyWebTarget target = client.target(
-	     "http://localhost:" + port + "/Agents/rest/agent/startAgent/" + tipAgenta + "/" + imeAgenta+"/"+port);
-	   Response response = target.request().get();
-	   String ret = response.readEntity(String.class);
-	   System.out.println("RET /**************" + ret);
+			String imeAgenta = poruka[1];
+			String tipAgenta = poruka[2];
+			String port = poruka[4];
 
-	   // AKO JE REST BIO USPESAN, POSALJI PORUKU NA KLIJENTA
-	   if (ret != null) {
-	    
-	    try {
-	    	System.out.println("??????????????????????????????????");
-	     log.info("Websocket endpoint: " + this.hashCode() + " primio: " + porukaZaJS + " u sesiji: "
-	       + session.getId());
-	     System.out.println("Lista sesija ima: "+sessions.size());
-	     for (Session s : sessions) {
-System.out.println("sesijaaaaaaaa: "+s.toString());
-	      s.getBasicRemote().sendText(porukaZaJS);
-	      log.info("Sending '" + porukaZaJS + "' to : " + s.getId());
+			String porukaZaJS = "Create|Agent " + imeAgenta + " kreiran.";
 
-	     }
+			System.out.println("WebSocket end point onMessage metoda za kreiranje agenta");
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget target = client.target("http://localhost:" + port + "/Agents/rest/agent/startAgent/"
+					+ tipAgenta + "/" + imeAgenta + "/" + port);
+			Response response = target.request().get();
+			String ret = response.readEntity(String.class);
 
-	     
-	    
-	    
-	    //OVO SADA DA APDEJTUJE ONE KOMBO BOKSOVE ZA PRIMA I SALJE 
-	    ResteasyClient client1 = new ResteasyClientBuilder().build();
-	    ResteasyWebTarget target1 = client.target(
-	      "http://localhost:" + port + "/Agents/rest/agent/runningAgents/");
-	    Response response1 = target1.request().get();
-	    String ret1 = response1.readEntity(String.class);
-	    System.out.println("RET /**************" + ret1);
-	    
-	    
-	    
-	    ArrayList<String> lista = new ArrayList<String>();
+			// AKO JE REST BIO USPESAN, POSALJI PORUKU NA KLIJENTA
+			if (ret != null) {
 
-	       JSONArray jsonA;
-	       try {
-	        jsonA = new JSONArray(ret1);
-	      
-	        for (int i = 0; i < jsonA.length(); i++) {
-	         String ime=jsonA.getJSONObject(i).getJSONObject("aid").getString("name");
-	    
-	         System.out.println("IMEEE: "  +ime);
-	         lista.add(ime);
-	        }
-	        
-	        System.out.println("LISTA TO STRING " + lista.toString());
-	       } catch (JSONException e) { 
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-	       }
-	    
-	       String porukaRefresh="Refresh|"+lista;
-	    
-	    
-	    
-	    
-	    
-	    try {
-	     log.info("Websocket endpoint: " + this.hashCode() + " primio: " + porukaRefresh + " u sesiji: "
-	       + session.getId());
-	     for (Session s : sessions) {
+				try {
+				
+					for (Session s : sessions) {
+					
+						s.getBasicRemote().sendText(porukaZaJS);
+					}
 
-	      s.getBasicRemote().sendText(porukaRefresh);
-	      log.info("Sending '" + porukaRefresh + "' to : " + s.getId());
+					// OVO SADA DA APDEJTUJE ONE KOMBO BOKSOVE ZA PRIMA I SALJE
+					ResteasyClient client1 = new ResteasyClientBuilder().build();
+					ResteasyWebTarget target1 = client
+							.target("http://localhost:" + port + "/Agents/rest/agent/runningAgents/");
+					Response response1 = target1.request().get();
+					String ret1 = response1.readEntity(String.class);
+					
 
-	     }
+					ArrayList<String> lista = new ArrayList<String>();
 
-	    } catch (IOException e) {
-	     try {
-	      session.close();
-	     } catch (IOException e1) {
-	      e1.printStackTrace();
-	     }
-	    }
-	    }catch (IOException e) {
-	     try {
-	      session.close();
-	     } catch (IOException e1) {
-	      e1.printStackTrace();
-	     }
-	    }
-	   }
-	  } else if (tip.equals("Message")) {
+					JSONArray jsonA;
+					try {
+						jsonA = new JSONArray(ret1);
 
-		  System.out.println("usao u metodu message u ws endpointu"+message);
-		  
-		  String preformative=poruka[1];
-		  String sender=poruka[2];
-		  String receiver=poruka[3];
-		  String content=poruka[4];
-		  
+						for (int i = 0; i < jsonA.length(); i++) {
+							String ime = jsonA.getJSONObject(i).getJSONObject("aid").getString("name");
 
-			AbstractAgent posiljalac=null;
-			AbstractAgent primalac=null;
-			
-			System.out.println(preformative+sender+receiver+content);
-			
-			System.out.println("runningggg:"+am);
-			
-			for(AID aid:am.getRunning().keySet()){
-				if(aid.getName().equals(sender)){
-					posiljalac=am.getRunning().get(aid);
+							
+							lista.add(ime);
+						}
+
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					String porukaRefresh = "Refresh|" + lista;
+
+					try {
+						
+						for (Session s : sessions) {
+
+							s.getBasicRemote().sendText(porukaRefresh);
+							
+
+						}
+
+					} catch (IOException e) {
+						try {
+							session.close();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				} catch (IOException e) {
+					try {
+						session.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		} else if (tip.equals("Message")) {
+
+			System.out.println("WebSocket onMessage metoda za slanje poruka");
+
+			String preformative = poruka[1];
+			String sender = poruka[2];
+			String receiver = poruka[3];
+			String content = poruka[4];
+
+			AbstractAgent posiljalac = null;
+			AbstractAgent primalac = null;
+
+	
+			for (AID aid : am.getRunning().keySet()) {
+				if (aid.getName().equals(sender)) {
+					posiljalac = am.getRunning().get(aid);
 					break;
 				}
 			}
+
+			for (AID aid : am.getRunning().keySet()) {
 			
-			for(AID aid:am.getRunning().keySet()){
-				System.out.println("agent sa imenom:"+ aid.getName());
-				if(aid.getName().equals(receiver)){
-					primalac=am.getRunning().get(aid);
-					System.out.println("primalac: "+aid.getName());
+				if (aid.getName().equals(receiver)) {
+					primalac = am.getRunning().get(aid);
+					
 					break;
 				}
 			}
-			
-			
-			System.out.println("gadja    http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" + preformative + "/" + sender+"/"+receiver+"/"+content);
-		  
-		  ResteasyClient client = new ResteasyClientBuilder().build();
-		   ResteasyWebTarget target = client.target(
-		     "http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" + preformative + "/" + sender+"/"+receiver+"/"+content);
-		   Response response = target.request().get();
-		   String ret = response.readEntity(String.class);
-	  }
 
-	 }
+			
 
-	 public void addSession(Session session) {
-	  sessions.add(session);
-	 }
-	 public static void posaljiOdgovor(String odgovor) throws IOException{
-		 for (Session s : sessions) {
-			 	      s.getBasicRemote().sendText(odgovor);
-		 }
-	 }
+			ResteasyClient client = new ResteasyClientBuilder().build();
+			ResteasyWebTarget target = client.target(
+					"http://localhost:" + primalac.getAid().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/"
+							+ preformative + "/" + sender + "/" + receiver + "/" + content);
+			Response response = target.request().get();
+			String ret = response.readEntity(String.class);
+		}
+
+	}
+
+	public void addSession(Session session) {
+		sessions.add(session);
+	}
+
+	public static void posaljiOdgovor(String odgovor) throws IOException {
+		for (Session s : sessions) {
+			s.getBasicRemote().sendText(odgovor);
+		}
+	}
 
 }

@@ -55,7 +55,7 @@ Nodes nodes;
 		//int br=Integer.valueOf(type1);
 		//String type=AgentTypesEnum.values()[br].toString();
 		
-		System.out.println("pogodio rest iz angulara na portu: "+StartApp.getPort()+" dobio: "+type+name+" lista ima: "+am.getRunning().values().size());
+		System.out.println("Start agent metoda");
 		
 		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), port1, StartApp.getCurrentName());
 		
@@ -65,26 +65,28 @@ Nodes nodes;
 		AbstractAgent agent=null;
 		String povratniTip="";
 		
-		System.out.println("!!!!!!!!!!!!: "+at.getName());
+		//System.out.println("!!!!!!!!!!!!: "+at.getName());
 		if(at.getName().equals(AgentTypesEnum.PING.toString())){
-			System.out.println("usao u ping");
+			System.out.println("Kreiran PING: "+name);
 			agent=new Ping(aid);
 			
 		}else if(at.getName().equals(AgentTypesEnum.PONG.toString())){
+			System.out.println("Kreiran PONG: "+name);
 			agent=new Pong(aid);
-			povratniTip=agent.getAid().getType().getName();
 		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE.toString())){
+			System.out.println("Kreiran WordCounter: "+name);
 			agent=new WordCounter(aid);
 		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET.toString())){
+			System.out.println("Kreiran ContractNet: "+name);
 			agent=new ContractNet(aid,am);
 		}
 		povratniTip=agent.getAid().getType().getName();
 		//PROVERA DA NE MOGU DA SE DODAJU 2 AGENTA SA ISTIM IMENOM
 		  boolean ok=true;
 		  for(AbstractAgent aa:am.getRunning().values()){
-			  System.out.println(aa.getAid().getName()+" a name je: "+name);
+			 
 		   if(aa.getAid().getName().equals(name)){
-			System.out.println("OK je postavljen na false");
+			System.out.println("Ime agenta vec postoji");
 		    ok=false;
 		    break;
 		   }
@@ -92,8 +94,9 @@ Nodes nodes;
 		   if(ok){
 		   am.addRunning(aid, agent);
 		  // AgentManager.running.put(aid, agent);
-		   System.out.println("dodao novog agenta u listu running: "+aid.getName());
+		  // System.out.println("dodao novog agenta u listu running: "+aid.getName());
 		   for(AgentCenter a:nodes.getNodes()) {
+			   System.out.println("Gadja rest na portu: "+ a.getPort()+" za dodavanje agenta(update)");
 			   ResteasyClient client = new ResteasyClientBuilder().build();
 			   ResteasyWebTarget target = client.target(
 			     "http://localhost:" + a.getPort() + "/Agents/rest/agent/startAgent/" + type + "/" + name+"/"+port1);
@@ -114,7 +117,7 @@ Nodes nodes;
 	public AbstractAgent startAgentRest(@PathParam("type") String type,@PathParam("name") String name, @PathParam("port") String port1){
 		
 		
-		System.out.println("startAgent rest: "+StartApp.getPort()+" dobio: "+type+name+" lista ima: "+am.getRunning().values().size());
+		System.out.println("startAgent rest metoda: ");
 		
 		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), port1, StartApp.getCurrentName());
 		
@@ -124,26 +127,29 @@ Nodes nodes;
 		AbstractAgent agent=null;
 		String povratniTip="";
 		
-		System.out.println("!!!!!!!!!!!!: "+at.getName());
+		//System.out.println("!!!!!!!!!!!!: "+at.getName());
 		if(at.getName().equals(AgentTypesEnum.PING.toString())){
-			System.out.println("usao u ping");
+			System.out.println("Kreiran PING: "+name);
 			agent=new Ping(aid);
 			
 		}else if(at.getName().equals(AgentTypesEnum.PONG.toString())){
+			System.out.println("Kreiran PONG: "+name);
 			agent=new Pong(aid);
 			povratniTip=agent.getAid().getType().getName();
 		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE.toString())){
+			System.out.println("Kreiran WordCounter: "+name);
 			agent=new WordCounter(aid);
 		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET.toString())){
+			System.out.println("Kreiran ContractNet: "+name);
 			agent=new ContractNet(aid,am);
 		}
 		povratniTip=agent.getAid().getType().getName();
 		//PROVERA DA NE MOGU DA SE DODAJU 2 AGENTA SA ISTIM IMENOM
 		  boolean ok=true;
 		  for(AbstractAgent aa:am.getRunning().values()){
-			  System.out.println(aa.getAid().getName()+" a name je: "+name);
+			 // System.out.println(aa.getAid().getName()+" a name je: "+name);
 		   if(aa.getAid().getName().equals(name)){
-			System.out.println("OK je postavljen na false");
+			System.out.println("Agent sa tim vec postoji");
 		    ok=false;
 		    break;
 		   }
@@ -151,8 +157,9 @@ Nodes nodes;
 		   if(ok){
 		   am.addRunning(aid, agent);
 		  // AgentManager.running.put(aid, agent);
-		   System.out.println("dodao novog agenta u listu running: "+aid.getName());
+		 //  System.out.println("dodao novog agenta u listu running: "+aid.getName());
 		   for(AgentCenter a:nodes.getNodes()) {
+			   System.out.println("Gadja rest na portu: "+ a.getPort()+" za dodavanje agenta(update)");
 			   ResteasyClient client = new ResteasyClientBuilder().build();
 			   ResteasyWebTarget target = client.target(
 			     "http://localhost:" + a.getPort() + "/Agents/rest/agent/startAgent/" + type + "/" + name+"/"+port1);
@@ -192,7 +199,7 @@ Nodes nodes;
 		String perfomativa=Performative.values()[perf].toString();
 		String message=perfomativa+"/"+sender+"/"+receiver+"/"+content;
 	
-		System.out.println("DA LI JE PRIMIOO " +message);	
+		
 		
 		AbstractAgent posiljalac=null;
 		AbstractAgent primalac=null;
@@ -282,7 +289,7 @@ Nodes nodes;
 	@Path("/proslediPoruku/{pref}/{sender}/{rec}/{content}")
 	public void proslediPoruku(@PathParam("pref") String pref,@PathParam("sender") String sender,@PathParam("rec") String rec,@PathParam("content") String content){
 	
-		System.out.println("usao u rest end point prosledi poruku, content: "+content);
+		System.out.println("metoda prosledi poruku");
 		
 		AbstractAgent posiljalac=null;
 		AbstractAgent primalac=null;

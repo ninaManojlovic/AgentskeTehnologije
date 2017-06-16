@@ -42,7 +42,7 @@ public class Pong extends AbstractAgent implements Serializable{
 		
 		if(message.getPerformative().equals(Performative.REQUEST)){
 		
-		System.out.println("I'm PONG, and I receve meesage from PING");
+		System.out.println("I'm PONG, and I received meesage from PING");
 		
 		
 		ACLMessage odgovor=new ACLMessage();
@@ -51,10 +51,10 @@ public class Pong extends AbstractAgent implements Serializable{
 		odgovor.setPerformative(Performative.AGREE);
 		odgovor.setContent("PONG recevied message, and send message back");
 		String pref=String.valueOf(Performative.AGREE.ordinal());
-		
+		//AKO SU NA ISTO CVORU RADI SE JMS, AKO NE SALJE SE REST
 		if(message.getReceiver().getHost().getPort().equals(message.getSender().getHost().getPort())){
 		
-		System.out.println("salje pong sad pingu: "+odgovor.getReceiver().getName());
+		//System.out.println("salje pong sad pingu: "+odgovor.getReceiver().getName());
 		JMSProducer2.sendJMS(odgovor);
 		}else{
 			 ResteasyClient client = new ResteasyClientBuilder().build();

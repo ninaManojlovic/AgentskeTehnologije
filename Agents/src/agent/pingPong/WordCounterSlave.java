@@ -18,11 +18,11 @@ public class WordCounterSlave extends AbstractAgent{
 
 	@Override
 	protected void onMessage(ACLMessage message) {
-		System.out.println("WORDCOUNTER SLAVE: "+message.getContent());
+		
 		String putanja=message.getContent();
 		
 		int cnt=0;
-        System.out.println("usao u counttt!");
+       
         BufferedReader br = null;
      
 
@@ -40,7 +40,7 @@ public class WordCounterSlave extends AbstractAgent{
                 cnt+=splited.length;
                 
             }
-            System.out.println("ima reci: "+cnt);
+            System.out.println(message.getContent()+" ima reci: "+cnt);
             
             ACLMessage odgovor=new ACLMessage();
             odgovor.setContent(String.valueOf(cnt));

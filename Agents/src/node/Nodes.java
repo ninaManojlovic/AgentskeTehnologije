@@ -43,7 +43,7 @@ public class Nodes implements Serializable{
 		nodes.add(master);
 		if (!master.getPort().equals(current.getPort())) {
 			   ResteasyClient client = new ResteasyClientBuilder().build();
-System.out.println("Cvor je slave, gadja mastera za registraciju");
+			   System.out.println("Cvor je slave na portu: "+current.getPort()+", gadja mastera za registraciju na portu: "+master.getPort());
 			   ResteasyWebTarget target = client
 			    // .target("http://" + master.getAddress() + ":" + master.getPort() + "/Agents/rest/node/registerNode/"+current.getAddress()+"/"+current.getPort()+"/"+current.getAlias());
 					   .target("http://localhost:"+ master.getPort() + "/Agents/rest/node/registerNode/"+current.getAddress()+"/"+current.getPort()+"/"+current.getAlias());
@@ -57,14 +57,14 @@ System.out.println("Cvor je slave, gadja mastera za registraciju");
 			   try {
 			    jsonA = new JSONArray(ret);
 			    
-			    System.out.println("vratio cvorove:");
+			//    System.out.println("vratio cvorove:");
 			    
 			    for (int i = 0; i < jsonA.length(); i++) {
 			     AgentCenter newOne = new AgentCenter();
 			     newOne.setAddress(jsonA.getJSONObject(i).getString("address"));
 			     newOne.setAlias(jsonA.getJSONObject(i).getString("alias"));
 			     newOne.setPort(jsonA.getJSONObject(i).getString("port"));
-			     System.out.println(newOne.getAddress()+" "+newOne.getPort());
+			    // System.out.println(newOne.getAddress()+" "+newOne.getPort());
 			     lista.add(newOne);
 			    }
 			   } catch (JSONException e) {
@@ -73,7 +73,7 @@ System.out.println("Cvor je slave, gadja mastera za registraciju");
 			   }
 
 			   setNodes(lista);
-System.out.println(StartApp.getPort()+" cvor ima listu od: "+nodes.size());
+//System.out.println(StartApp.getPort()+" cvor ima listu od: "+nodes.size());
 			  }
 			 }
 	

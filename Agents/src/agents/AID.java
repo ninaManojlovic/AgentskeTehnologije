@@ -9,9 +9,9 @@ public class AID implements Serializable{
 	 */
 	private static final long serialVersionUID = -209185513513460516L;
 	
-	private String name;
-	private AgentCenter host;
-	private AgentType type;
+	private String name;//IME AGENTA
+	private AgentCenter host;//CVOR NA KOM JE AGENT
+	private AgentType type;//TIP
 	
 	public AID(String aid){
 		
