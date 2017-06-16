@@ -105,9 +105,67 @@ Nodes nodes;
 		   }else{
 		    return null;
 		   }
-	
-	
 	}
+	
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/startAgentRest/{type}/{name}/{port}")
+	public AbstractAgent startAgentRest(@PathParam("type") String type,@PathParam("name") String name, @PathParam("port") String port1){
+		
+		
+		System.out.println("startAgent rest: "+StartApp.getPort()+" dobio: "+type+name+" lista ima: "+am.getRunning().values().size());
+		
+		AgentCenter ac=new AgentCenter(StartApp.getCurrentAddress(), port1, StartApp.getCurrentName());
+		
+		AgentType at=new AgentType(type, "ag");
+		AID aid=new AID(name, ac, at);
+		
+		AbstractAgent agent=null;
+		String povratniTip="";
+		
+		System.out.println("!!!!!!!!!!!!: "+at.getName());
+		if(at.getName().equals(AgentTypesEnum.PING.toString())){
+			System.out.println("usao u ping");
+			agent=new Ping(aid);
+			
+		}else if(at.getName().equals(AgentTypesEnum.PONG.toString())){
+			agent=new Pong(aid);
+			povratniTip=agent.getAid().getType().getName();
+		}else if(at.getName().equals(AgentTypesEnum.MAPREDUCE.toString())){
+			agent=new WordCounter(aid);
+		}else if(at.getName().equals(AgentTypesEnum.CONTRACTNET.toString())){
+			agent=new ContractNet(aid,am);
+		}
+		povratniTip=agent.getAid().getType().getName();
+		//PROVERA DA NE MOGU DA SE DODAJU 2 AGENTA SA ISTIM IMENOM
+		  boolean ok=true;
+		  for(AbstractAgent aa:am.getRunning().values()){
+			  System.out.println(aa.getAid().getName()+" a name je: "+name);
+		   if(aa.getAid().getName().equals(name)){
+			System.out.println("OK je postavljen na false");
+		    ok=false;
+		    break;
+		   }
+		  }
+		   if(ok){
+		   am.addRunning(aid, agent);
+		  // AgentManager.running.put(aid, agent);
+		   System.out.println("dodao novog agenta u listu running: "+aid.getName());
+		   for(AgentCenter a:nodes.getNodes()) {
+			   ResteasyClient client = new ResteasyClientBuilder().build();
+			   ResteasyWebTarget target = client.target(
+			     "http://localhost:" + a.getPort() + "/Agents/rest/agent/startAgent/" + type + "/" + name+"/"+port1);
+			  Response response = target.request().get();
+			   String ret = response.readEntity(String.class);
+		   }
+		  
+		   return agent;
+		   }else{
+		    return null;
+		   }
+	}
+	
 	
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -125,8 +183,8 @@ Nodes nodes;
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/sendMessage/{tipPoruke}/{sender}/{receiver}/{content}")
-	public void sendMessage(@PathParam("tipPoruke") String tipPoruke,@PathParam("sender") String sender,@PathParam("receiver") String receiver,@PathParam("content") String content) throws JsonParseException, JsonMappingException, IOException, JSONException{
+	@Path("/sendMessage/{tipPoruke}/{sender}/{receiver}")
+	public void sendMessage(@PathParam("tipPoruke") String tipPoruke,@PathParam("sender") String sender,@PathParam("receiver") String receiver, String content) throws JsonParseException, JsonMappingException, IOException, JSONException{
 		
 		//ObjectMapper mapper=new ObjectMapper();
 	

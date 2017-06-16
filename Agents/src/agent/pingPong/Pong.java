@@ -1,5 +1,6 @@
 package agent.pingPong;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import agents.AgentManager;
 import jms.JMSProducer2;
 import message.ACLMessage;
 import message.Performative;
+import webSocket.WsEndpoint;
 
 public class Pong extends AbstractAgent implements Serializable{
 
@@ -62,6 +64,14 @@ public class Pong extends AbstractAgent implements Serializable{
 			   String ret = response.readEntity(String.class);	
 			
 		}
+		}else if(message.getPerformative().equals(Performative.INFORM)){
+			System.out.println("uso u inform: "+message.getContent());
+			try {
+				WsEndpoint.posaljiOdgovor(message.getContent());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

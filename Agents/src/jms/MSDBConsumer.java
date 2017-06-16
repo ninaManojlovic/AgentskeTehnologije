@@ -60,6 +60,7 @@ public class MSDBConsumer implements MessageListener{
 	 
 	 @Override
 	 public void onMessage(Message arg0) {
+		 System.out.println("on message u MSDB-u");
 		 ACLMessage message=null;
 		try {
 			message = (ACLMessage) ((ObjectMessage) arg0).getObject();

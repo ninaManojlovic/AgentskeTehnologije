@@ -15,14 +15,25 @@ app.controller('ctrl', function ($scope,$rootScope,$window, $http, service) {
 	}
 	
 	$scope.startAgent=function(){
+		$scope.startAgent1($scope.getRunning);
+	}
+	
+	$scope.startAgent1=function(callback){
 		if($scope.rest==true){
 		console.log("usao u func u ctrl");
-		service.startAgent($scope.name,$scope.type);
-		$scope.getRunning();
+		service.startAgent($scope.name,$scope.type)
+		.success(function(data){
+			var kon=document.getElementById("konzola");
+			kon.value+="Kreiran: "+data.aid.name+" tipa: "+data.aid.type.name +"\n";
+			console.log(data);
+			$scope.getRunning();
+		})
+	
 		}else{
 			console.log("ws za start agenta");
 			service.startAgentWS($scope.name,$scope.type);
-			$scope.getRunning();
+			callback();
+			
 		}
 	}
 	

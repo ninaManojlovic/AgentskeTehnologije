@@ -50,6 +50,16 @@ public class Ping extends AbstractAgent {
 		
 		String con= "Inform|PONG: "+message.getSender().getName()+" odgovorio PINGU: "+message.getReceiver().getName();
 		odgovor.setContent(con);
+		
+		if(posiljalac==null){
+			try {
+				WsEndpoint.posaljiOdgovor(odgovor.getContent());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+		
 		System.out.println("Posiljalac"+posiljalac.getName());
 		
 		if(odgovor.getSender().getHost().getPort().equals(odgovor.getReceiver().getHost().getPort())){
@@ -62,6 +72,7 @@ public class Ping extends AbstractAgent {
 			     "http://localhost:" + odgovor.getReceiver().getHost().getPort() + "/Agents/rest/agent/proslediPoruku/" +pref + "/" + odgovor.getSender().getName()+"/"+odgovor.getReceiver().getName()+"/"+odgovor.getContent());
 			   Response response = target.request().get();
 			   String ret = response.readEntity(String.class);	
+		}
 		}
 		
 	}else if(message.getPerformative().equals(Performative.REQUEST)){

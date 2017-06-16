@@ -1,6 +1,7 @@
 package agent.pingPong;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.ws.rs.core.Response;
@@ -18,6 +19,7 @@ import jms.JMSProducer2;
 import message.ACLMessage;
 import message.Performative;
 import node.StartApp;
+import webSocket.WsEndpoint;
 
 public class WordCounter extends AbstractAgent{
 
@@ -37,11 +39,12 @@ public class WordCounter extends AbstractAgent{
 	protected void onMessage(ACLMessage message) {
 		
 		if(message.getPerformative().toString().equals(Performative.REQUEST.toString())){
-		
+			ukupanBroj=0;
+			brojRobova=0;
 			posiljalac=message.getSender();
 		String putanja=message.getContent();
 		
-		System.out.println("word counter metoda");
+		System.out.println("word counter metoda, posiljalac je: "+posiljalac.getName());
 		
 		File file=new File(putanja);
 		File[] file2=file.listFiles();
@@ -74,7 +77,7 @@ public class WordCounter extends AbstractAgent{
 		System.out.println("WordCounterSlave vratio: "+broj+" ukupno file ima: "+ukupanBroj);
 		
 		if(brojRobova==0){
-			
+			System.out.println("//////SVI VRATILI///////");
 			ACLMessage odgovor=new ACLMessage();
 			odgovor.setPerformative(Performative.INFORM);
 			String perfomat=String.valueOf(Performative.INFORM.ordinal());
@@ -95,6 +98,15 @@ public class WordCounter extends AbstractAgent{
 				
 			}			
 		}
+	}else if(message.getPerformative().equals(Performative.INFORM)){
+		System.out.println("uso u inform: "+message.getContent());
+		try {
+			WsEndpoint.posaljiOdgovor(message.getContent());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+		
 	}
 }

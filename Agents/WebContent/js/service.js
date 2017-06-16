@@ -5,8 +5,8 @@ app.factory('service',['$http', function($http,$scope){
 	
 		console.log("usao u func u servisu: "+name+type);
 		var port = window.location.port;
-		var t= $http.get('/Agents/rest/agent/startAgent/'+type+'/'+name+'/'+port);
-		console.log("return iz servidsa: "+t);
+		var t= $http.get('/Agents/rest/agent/startAgentRest/'+type+'/'+name+'/'+port);
+		//console.log("return iz servidsa: "+t);
 		return t;
 	
 	}
@@ -21,7 +21,7 @@ app.factory('service',['$http', function($http,$scope){
 		//var poruka={"sender":sender, "receivers":receivers, "content":content}
 		//console.log(JSON.stringify(poruka));
 		//var nesto=JSON.stringify(poruka);
-		return $http.post('/Agents/rest/agent/sendMessage/'+tipPoruke+'/'+sender+'/'+receivers+'/'+content);
+		return $http.post('/Agents/rest/agent/sendMessage/'+tipPoruke+'/'+sender+'/'+receivers,content);
 		
 	}
 	
@@ -98,6 +98,7 @@ app.factory('service',['$http', function($http,$scope){
 			   var por="Create;"+imeAgenta+";"+selekt+";"+domain+";"+port;
 			   console.log("start agent service: "+por)
 			   socket.send(por);
+			   return true;
 	}	
 		
 	
@@ -112,7 +113,9 @@ app.factory('service',['$http', function($http,$scope){
 		
 	}
 	k.getRunning=function(){
-		return $http.get('/Agents/rest/agent/runningAgents')
+		console.log("running service");
+		var n=$http.get('/Agents/rest/agent/runningAgents');
+		return n;
 	}
 	return k;
 }]);

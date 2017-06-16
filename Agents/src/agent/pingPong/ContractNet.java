@@ -1,5 +1,6 @@
 package agent.pingPong;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import agents.AgentManager;
 import jms.JMSProducer2;
 import message.ACLMessage;
 import message.Performative;
+import webSocket.WsEndpoint;
 
 public class ContractNet extends AbstractAgent{
 
@@ -180,6 +182,14 @@ public class ContractNet extends AbstractAgent{
 		}else if(message.getPerformative().toString().equals(Performative.REJECT_PROPOSAL.toString())){
 			System.out.println(message.getReceiver().getName()+" je dobio REJECT PROPOSAL od: "+message.getSender().getName());
 
+		}else if(message.getPerformative().equals(Performative.INFORM)){
+			System.out.println("uso u inform: "+message.getContent());
+			try {
+				WsEndpoint.posaljiOdgovor(message.getContent());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
